@@ -2114,7 +2114,20 @@ void CompilerHLSL::emit_instruction(const Instruction &instruction)
 	{
 		uint32_t result_type = ops[0];
 		uint32_t id = ops[1];
-		emit_op(result_type, id, to_expression(ops[2]), true, true);
+		if (options.shader_model >= 40 && ids[ops[2]].get_type() == TypeCombinedImageSampler)
+		{
+			auto &combined = get<SPIRCombinedImageSampler>(ops[2]);
+
+			auto &e = emit_op(result_type, id, to_expression(combined.image), true);
+
+			// When using the image, we need to know which variable it is actually loaded from.
+			auto *var = maybe_get_backing_variable(combined.image);
+			e.loaded_from = var ? var->self : 0;
+		}
+		else
+		{
+			emit_op(result_type, id, to_expression(ops[2]), true, true);
+		}
 		// TODO: Maybe change this when separate samplers/images are supported
 		break;
 	}
