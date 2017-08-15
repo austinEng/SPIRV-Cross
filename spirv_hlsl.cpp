@@ -369,6 +369,11 @@ void CompilerHLSL::emit_builtin_inputs_in_struct()
 			semantic = "SV_SampleIndex";
 			break;
 
+		case BuiltInPrimitiveId:
+			type = "uint";
+			semantic = "SV_PrimitiveID";
+			break;
+
 		default:
 			SPIRV_CROSS_THROW("Unsupported builtin in HLSL.");
 			break;
@@ -568,6 +573,10 @@ void CompilerHLSL::emit_builtin_variables()
 			}
 			else
 				SPIRV_CROSS_THROW(join("Unsupported builtin in HLSL: ", unsigned(builtin)));
+
+		case BuiltInPrimitiveId:
+			type = "uint";
+			break;
 
 		default:
 			SPIRV_CROSS_THROW(join("Unsupported builtin in HLSL: ", unsigned(builtin)));
